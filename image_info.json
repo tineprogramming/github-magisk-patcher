@@ -3,5 +3,5 @@
 	"build_number": "SP1A.210812.015",
 	"link": "https://khengpa.dynu.net:4443/tinefiles/glocalme/U3/bootmo/original/boot.img",
 	"checksum": "6dae03f8e91644f6ee0b9e872faaee2b43312c490f05934940c68074dced303a",
-	"magisk": "https://github.com/topjohnwu/Magisk/releases/download/v23.0/Magisk-v23.0.apk"
+	"magisk": "https://github.com/topjohnwu/Magisk/releases/download/v25.2/Magisk-v25.2.apk"
 }
