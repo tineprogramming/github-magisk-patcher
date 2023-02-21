@@ -102,11 +102,7 @@ jobs:
         with:
           name: addond
           
-      - name: Get boot image from artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: boot_img_unpatched
-          
+    
       - name: Unzip files
         run: |
             cp Magisk.apk Magisk.zip
@@ -147,11 +143,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-     
-      - name: Get boot image from artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: boot_img_unpatched
           
       - name: Get patched boot image from artifacts
         uses: actions/download-artifact@v2
@@ -175,7 +166,6 @@ jobs:
       - name: Rename files
         run: |
           mv new-boot.img boot_magisk_patched.img
-          mv boot.img boot_original.img
           
       - name: Upload images to release
         uses: svenstaro/upload-release-action@v2
