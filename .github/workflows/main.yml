@@ -156,13 +156,6 @@ jobs:
             chmod +x boot_patch.sh
             chmod +x util_functions.sh
             chmod +x get_property.sh
-            line=$(grep -n '/proc/self/fd/$OUTFD' util_functions.sh | awk '{print $1}' | sed 's/.$//')
-            #Edit the scripts
-            KEYWORD="/proc/self/fd/$OUTFD";
-            ESCAPED_KEYWORD=$(printf '%s\n' "$KEYWORD" | sed -e 's/[]\/$*.^[]/\\&/g');
-            sed -i "/$ESCAPED_KEYWORD/d" util_functions.sh
-            #Add echo "$1"
-            (echo "$line-1"; echo a; echo 'echo "$1"'; echo .; echo wq) | ed util_functions.sh
             sed -i '1c\#!/bin/bash' boot_patch.sh
             echo ::set-output name=result::$(bash -c 'source ./get_property.sh && ./boot_patch.sh boot.img')
             echo $(bash -c 'source ./get_property.sh && getprop ro.crypto.state')
