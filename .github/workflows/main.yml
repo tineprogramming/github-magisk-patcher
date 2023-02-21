@@ -176,7 +176,7 @@ jobs:
             chmod +x util_functions.sh
             chmod +x get_property.sh
             sed -i '1c\#!/bin/bash' boot_patch.sh
-            echo ::set-output name=result::$(bash -c 'source ./get_property.sh && ./boot_patch.sh boot.img')
+            echo ::set-output name=result::$(bash -c 'source ./get_property.sh && ./boot_patch.sh boot-original.img')
             echo $(bash -c 'source ./get_property.sh && getprop ro.crypto.state')
             
       - name: Upload patched boot image
