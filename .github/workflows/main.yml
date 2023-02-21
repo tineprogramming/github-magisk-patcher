@@ -74,54 +74,10 @@ jobs:
           name: addond
           path: ./addon.d.sh
           
-          
-  factory_image:
-    name: Get Factory Image and Extract Boot Image
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      
-      - name: Get factory image link
-        id: link
-        uses: notiz-dev/github-action-json-property@release
-        with:
-          path: 'image_info.json'
-          prop_path: 'link'
-          
-      - name: Download factory image
-        uses: wei/wget@v1
-        with:
-          args: -O factory_image.zip ${{steps.link.outputs.prop}}
-          
-      - name: Get image build number
-        id: build_no
-        uses: notiz-dev/github-action-json-property@release
-        with:
-          path: 'image_info.json'
-          prop_path: 'build_number'
-          
-      - name: Unzip factory image
-        run: |
-            mkdir factory_image
-            unzip factory_image.zip -d factory_image
-            
-      - name: Extract boot image
-        run: |
-            rm factory_image.zip
-            export FOLDER_NAME=$(ls -h factory_image/ | grep -i ${{steps.build_no.outputs.prop}})
-            echo "FOLDER_NAME=${FOLDER_NAME}" >> $GITHUB_ENV
-            unzip factory_image/"${FOLDER_NAME}/image-${FOLDER_NAME}.zip"
-            
-      - name: Upload boot image to artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: boot_img_unpatched
-          path: ./boot.img
-          
-          
+                  
   patch_img:
     name: Gather Files and Start Patching
-    needs: [prerequisites, factory_image]
+    needs: [prerequisites]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
