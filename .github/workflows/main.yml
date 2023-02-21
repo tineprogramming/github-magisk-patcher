@@ -74,10 +74,35 @@ jobs:
           name: addond
           path: ./addon.d.sh
           
-                  
+          
+  factory_image:
+    name: Get Factory Boot Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Get factory boot image link
+        id: link
+        uses: notiz-dev/github-action-json-property@release
+        with:
+          path: 'image_info.json'
+          prop_path: 'link'
+          
+      - name: Download factory boot image
+        uses: wei/wget@v1
+        with:
+          args: -O boot.img ${{steps.link.outputs.prop}}
+            
+      - name: Upload boot image to artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: boot_img_unpatched
+          path: ./boot.img
+          
+          
   patch_img:
     name: Gather Files and Start Patching
-    needs: [prerequisites]
+    needs: [prerequisites, factory_image]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -102,7 +127,11 @@ jobs:
         with:
           name: addond
           
-    
+      - name: Get boot image from artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: boot_img_unpatched
+          
       - name: Unzip files
         run: |
             cp Magisk.apk Magisk.zip
@@ -128,7 +157,7 @@ jobs:
             chmod +x util_functions.sh
             chmod +x get_property.sh
             sed -i '1c\#!/bin/bash' boot_patch.sh
-            echo ::set-output name=result::$(bash -c 'source ./get_property.sh && ./boot_patch.sh boot-original.img')
+            echo ::set-output name=result::$(bash -c 'source ./get_property.sh && ./boot_patch.sh boot.img')
             echo $(bash -c 'source ./get_property.sh && getprop ro.crypto.state')
             
       - name: Upload patched boot image
@@ -143,6 +172,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+     
+      - name: Get boot image from artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: boot_img_unpatched
           
       - name: Get patched boot image from artifacts
         uses: actions/download-artifact@v2
@@ -166,6 +200,7 @@ jobs:
       - name: Rename files
         run: |
           mv new-boot.img boot_magisk_patched.img
+          mv boot.img boot_original.img
           
       - name: Upload images to release
         uses: svenstaro/upload-release-action@v2
@@ -176,7 +211,3 @@ jobs:
           file_glob: true
           overwrite: true
           
-          
-        
-      
-      
